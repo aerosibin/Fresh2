@@ -1,0 +1,4 @@
+project_id = "pujlgyxughaqpfilipoy"
+
+[functions.mood-recommendations]
+verify_jwt = false
