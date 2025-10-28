@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { TrendingUp, DollarSign, Package, Users, BarChart, Zap, MapPin } from "lucide-react";
+import { TrendingUp, DollarSign, Package, Users, BarChart, Zap, MapPin, Clock, Star, Headphones, Siren, AlertTriangle, GitFork } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
@@ -27,12 +27,29 @@ const Admin = () => {
   if (!user || userRole !== 'admin') {
     return null;
   }
-  // Mock data for analytics
+
   const stats = [
-    { label: "Total Orders", value: "2,847", change: "+12.5%", icon: Package, color: "text-primary" },
-    { label: "Revenue", value: "$45,382", change: "+8.2%", icon: DollarSign, color: "text-secondary" },
-    { label: "Active Users", value: "1,234", change: "+5.7%", icon: Users, color: "text-accent" },
-    { label: "Avg Delivery Time", value: "18 min", change: "-2.3%", icon: Zap, color: "text-destructive" },
+    { label: "Total Deliveries (30d)", value: "2,847", change: "+12.5%", icon: Package, color: "text-primary" },
+    { label: "Avg Payout/Delivery (30d)", value: "$12.50", change: "+2.1%", icon: DollarSign, color: "text-secondary" },
+    { label: "Avg Store Wait Time (30d)", value: "8 min", change: "-5.2%", icon: Clock, color: "text-destructive" },
+    { label: "Avg Customer Rating (30d)", value: "4.8", change: "+0.5%", icon: Star, color: "text-yellow-500" },
+    { label: "Total Online Hours (30d)", value: "1,234", change: "+8.2%", icon: Zap, color: "text-accent" },
+    { label: "Total Sessions (30d)", value: "452", change: "+6.8%", icon: BarChart, color: "text-info" },
+    { label: "Days Since Last Delivery", value: "2", change: "", icon: Clock, color: "text-gray-500" },
+    { label: "Tenure in Days", value: "365", change: "", icon: Users, color: "text-gray-500" },
+    { label: "Support Tickets (90d)", value: "12", change: "-15%", icon: Headphones, color: "text-red-500" },
+  ];
+
+  const crashAlerts = [
+    { rider_id: 'rider_789', last_known_gps: '12.9750, 77.6000', status: 'UNRESPONSIVE' },
+  ];
+
+  const fraudCases = [
+    { type: 'GPS_MISMATCH', rider_id: 'rider_123', delivery_id: 'order_456', distance_m: '5734m mismatch', status: 'PENDING_REVIEW' },
+  ];
+
+  const routeInefficiency = [
+    { rider_id: 'rider_007', delivery_id: 'delivery_701', delta: 2.15 },
   ];
 
   const topProducts = [
@@ -49,13 +66,6 @@ const Admin = () => {
     { zone: "Zone C", orders: 612, avgTime: "28 min", congestion: "High", color: "bg-destructive" },
   ];
 
-  const pricingInsights = [
-    { metric: "Avg Base Fee", value: "$20.00", trend: "stable" },
-    { metric: "Avg Distance Fee", value: "$35.00", trend: "up" },
-    { metric: "Avg Surge Fee", value: "$10.00", trend: "up" },
-    { metric: "Rocket Premium", value: "$6.00", trend: "stable" },
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Navbar />
@@ -66,8 +76,51 @@ const Admin = () => {
           <p className="text-muted-foreground">Real-time analytics and predictive insights</p>
         </div>
 
+        <div className="grid lg:grid-cols-2 gap-8 mb-8">
+            <Card className="p-6 bg-destructive text-destructive-foreground border-0 shadow-lg">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">!!! CRASH ALERTS !!!</h2>
+                    <Siren className="w-6 h-6" />
+                </div>
+                <div className="space-y-3">
+                    {crashAlerts.map((alert) => (
+                        <div key={alert.rider_id} className="bg-destructive-foreground/10 rounded-lg p-3">
+                            <div className="flex justify-between items-center">
+                                <span className="font-bold">{alert.rider_id}</span>
+                                <span className="text-sm">{alert.last_known_gps}</span>
+                            </div>
+                            <p className="text-xs opacity-80 mt-1">Status: {alert.status}</p>
+                        </div>
+                    ))}
+                </div>
+            </Card>
+
+            <Card className="p-6 bg-card border-border">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-semibold text-foreground">Fraud Cases for Review</h2>
+                    <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                </div>
+                <div className="space-y-4">
+                    {fraudCases.map((f_case) => (
+                        <div key={f_case.delivery_id} className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-sm font-bold text-yellow-500">
+                                <AlertTriangle className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-medium text-foreground">{f_case.rider_id}</p>
+                                <p className="text-sm text-muted-foreground">{f_case.type} - {f_case.delivery_id}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="font-semibold text-foreground">{f_case.distance_m}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </Card>
+        </div>
+
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
@@ -80,11 +133,15 @@ const Admin = () => {
                   <Icon className={`w-8 h-8 ${stat.color}`} />
                 </div>
                 <div className="flex items-center gap-1">
-                  <TrendingUp className={`w-4 h-4 ${stat.change.startsWith('+') ? 'text-primary' : 'text-destructive'}`} />
-                  <span className={`text-sm font-medium ${stat.change.startsWith('+') ? 'text-primary' : 'text-destructive'}`}>
-                    {stat.change}
-                  </span>
-                  <span className="text-sm text-muted-foreground">vs last month</span>
+                  {stat.change && (
+                    <>
+                      <TrendingUp className={`w-4 h-4 ${stat.change.startsWith('+') ? 'text-primary' : 'text-destructive'}`} />
+                      <span className={`text-sm font-medium ${stat.change.startsWith('+') ? 'text-primary' : 'text-destructive'}`}>
+                        {stat.change}
+                      </span>
+                      <span className="text-sm text-muted-foreground">vs last month</span>
+                    </>
+                  )}
                 </div>
               </Card>
             );
@@ -149,89 +206,29 @@ const Admin = () => {
               ))}
             </div>
           </Card>
-        </div>
 
-        {/* Pricing Insights */}
-        <Card className="p-6 bg-gradient-accent text-secondary-foreground border-0 shadow-pricing">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold">Dynamic Pricing Insights</h2>
-            <Badge className="bg-secondary-foreground/20 text-secondary-foreground border-0">
-              Last 30 Days
-            </Badge>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {pricingInsights.map((insight) => (
-              <div key={insight.metric} className="bg-secondary-foreground/10 rounded-lg p-4">
-                <p className="text-sm mb-2 opacity-90">{insight.metric}</p>
-                <div className="flex items-end justify-between">
-                  <p className="text-2xl font-bold">{insight.value}</p>
-                  {insight.trend === 'up' && (
-                    <TrendingUp className="w-5 h-5 text-accent-foreground" />
-                  )}
-                  {insight.trend === 'stable' && (
-                    <div className="w-5 h-0.5 bg-secondary-foreground/40"></div>
-                  )}
+            <Card className="p-6 bg-card border-border">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-semibold text-foreground">Route Inefficiency Flags</h2>
+                    <GitFork className="w-5 h-5 text-muted-foreground" />
                 </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* AI Predictions */}
-        <div className="grid lg:grid-cols-2 gap-8 mt-8">
-          <Card className="p-6 bg-card border-border">
-            <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-5 h-5 text-accent" />
-              <h3 className="text-lg font-semibold text-foreground">Predicted Demand Surge</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Today 6PM - 8PM</span>
-                <Badge className="bg-destructive text-destructive-foreground">High</Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Tomorrow 12PM - 2PM</span>
-                <Badge className="bg-accent text-accent-foreground">Medium</Badge>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Tomorrow 8PM - 10PM</span>
-                <Badge className="bg-primary text-primary-foreground">Low</Badge>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 bg-card border-border">
-            <div className="flex items-center gap-2 mb-4">
-              <Package className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-semibold text-foreground">Stock Recommendations</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🍌</span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">Organic Bananas</p>
-                  <p className="text-xs text-muted-foreground">Restock in 2 days</p>
+                <div className="space-y-4">
+                    {routeInefficiency.map((route) => (
+                        <div key={route.delivery_id} className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-sm font-bold text-blue-500">
+                                <GitFork className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-medium text-foreground">{route.rider_id}</p>
+                                <p className="text-sm text-muted-foreground">{route.delivery_id}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="font-semibold text-blue-500">{route.delta.toFixed(2)}x optimal</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                <Badge variant="outline" className="text-xs">+15%</Badge>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🥛</span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">Fresh Milk</p>
-                  <p className="text-xs text-muted-foreground">Restock in 1 day</p>
-                </div>
-                <Badge variant="outline" className="text-xs">+8%</Badge>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🥑</span>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">Avocados</p>
-                  <p className="text-xs text-muted-foreground">Trending up</p>
-                </div>
-                <Badge variant="outline" className="text-xs">+22%</Badge>
-              </div>
-            </div>
-          </Card>
+            </Card>
         </div>
       </div>
     </div>
