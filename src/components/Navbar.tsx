@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ShoppingBag, BarChart3, Package, History, Heart, Settings, LogOut, User as UserIcon } from "lucide-react";
+import { ShoppingBag, BarChart3, Package, History, Heart, Settings, LogOut, User as UserIcon, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,14 +32,25 @@ const Navbar = () => {
 
           <div className="flex items-center gap-6">
             {userRole !== 'admin' && (
-              <Link to="/">
-                <Button 
-                  variant={isActive("/") ? "default" : "ghost"}
-                  className={isActive("/") ? "bg-primary hover:bg-primary-hover" : ""}
-                >
-                  Shop
-                </Button>
-              </Link>
+              <>
+                <Link to="/">
+                  <Button 
+                    variant={isActive("/") ? "default" : "ghost"}
+                    className={isActive("/") ? "bg-primary hover:bg-primary-hover" : ""}
+                  >
+                    Shop
+                  </Button>
+                </Link>
+                <Link to="/personalized">
+                  <Button 
+                    variant={isActive("/personalized") ? "default" : "ghost"}
+                    className={isActive("/personalized") ? "bg-primary hover:bg-primary-hover" : ""}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    For You
+                  </Button>
+                </Link>
+              </>
             )}
             <Link to="/tracking">
               <Button 
@@ -90,7 +101,7 @@ const Navbar = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <div className="px-2 py-2">
+                 <div className="px-2 py-2">
                   <p className="text-xs font-semibold text-muted-foreground mb-2">Recent Orders</p>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors">
@@ -110,20 +121,10 @@ const Navbar = () => {
                   </div>
                 </div>
                 <DropdownMenuSeparator />
-                <div className="px-2 py-2">
-                  <p className="text-xs font-semibold text-muted-foreground mb-2">Favorites</p>
-                  <div className="flex gap-2">
-                    <div className="flex-1 text-xs p-2 rounded-md bg-gradient-subtle border border-border">
-                      <p className="font-medium">Organic Apples</p>
-                      <p className="text-muted-foreground">₹120/kg</p>
-                    </div>
-                    <div className="flex-1 text-xs p-2 rounded-md bg-gradient-subtle border border-border">
-                      <p className="font-medium">Fresh Milk</p>
-                      <p className="text-muted-foreground">₹60/L</p>
-                    </div>
-                  </div>
-                </div>
-                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/personalized')}>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  <span>For You</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/tracking')}>
                   <History className="mr-2 h-4 w-4" />
                   <span>Order History</span>

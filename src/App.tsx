@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import Settings from "./pages/Settings";
 import SavedItems from "./pages/SavedItems";
 import Rider from "./pages/Rider";
+import Personalized from "./pages/Personalized";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/saved-items" element={<SavedItems />} />
             <Route path="/rider" element={<Rider />} />
+            <Route path="/personalized" element={<Personalized />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
